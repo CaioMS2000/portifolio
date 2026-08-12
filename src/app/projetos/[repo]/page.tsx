@@ -38,7 +38,7 @@ export default async function ProjectRepoPage({
 					selectedPath={selectedFile?.path ?? null}
 					repoSlug={repo}
 				/>
-				<div className="min-h-[400px] rounded-[6px] border border-border bg-card">
+				<div className="min-h-100 rounded-[6px] border border-border bg-card">
 					<Suspense
 						key={selectedFile?.path ?? 'none'}
 						fallback={

@@ -65,22 +65,27 @@ export function isBinaryPath(path: string): boolean {
 	return BINARY_EXTENSIONS.has(getExtension(path))
 }
 
+export function isMarkdownPath(path: string): boolean {
+	return ['md', 'mdx'].includes(getExtension(path))
+}
+
 export function getLanguageFromPath(path: string): string {
 	return EXTENSION_TO_LANG[getExtension(path)] ?? 'text'
 }
 
 export async function highlightCode(
 	code: string,
-	path: string
+	lang: string
 ): Promise<{ html: string; skipped: boolean }> {
 	if (Buffer.byteLength(code, 'utf8') > MAX_HIGHLIGHT_BYTES) {
 		return { html: '', skipped: true }
 	}
 
-	const html = await codeToHtml(code, {
-		lang: getLanguageFromPath(path),
-		theme: 'github-dark',
-	})
-
-	return { html, skipped: false }
+	try {
+		const html = await codeToHtml(code, { lang, theme: 'github-dark' })
+		return { html, skipped: false }
+	} catch {
+		const html = await codeToHtml(code, { lang: 'text', theme: 'github-dark' })
+		return { html, skipped: false }
+	}
 }

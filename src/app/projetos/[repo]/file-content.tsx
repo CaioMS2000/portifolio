@@ -1,5 +1,11 @@
 import { getFileContent } from '@/lib/github'
-import { highlightCode, isBinaryPath } from '@/lib/highlight'
+import {
+	getLanguageFromPath,
+	highlightCode,
+	isBinaryPath,
+	isMarkdownPath,
+} from '@/lib/highlight'
+import { MarkdownContent } from './markdown-content'
 
 const MAX_PREVIEW_BYTES = 1_000_000
 
@@ -62,7 +68,14 @@ export async function FileContent({
 		)
 	}
 
-	const { html, skipped } = await highlightCode(file.content, path)
+	if (isMarkdownPath(path)) {
+		return <MarkdownContent content={file.content} />
+	}
+
+	const { html, skipped } = await highlightCode(
+		file.content,
+		getLanguageFromPath(path)
+	)
 
 	if (skipped) {
 		return (
