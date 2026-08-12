@@ -2,6 +2,7 @@
 
 import { ChevronRight, File, Folder } from 'lucide-react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import {
 	Collapsible,
 	CollapsibleContent,
@@ -22,14 +23,19 @@ function FolderRow({
 	repoSlug: string
 }) {
 	const containsSelected = Boolean(selectedPath?.startsWith(`${node.path}/`))
+	const [open, setOpen] = useState(containsSelected)
+
+	useEffect(() => {
+		if (containsSelected) setOpen(true)
+	}, [containsSelected])
 
 	return (
-		<Collapsible defaultOpen={containsSelected}>
+		<Collapsible open={open} onOpenChange={setOpen}>
 			<CollapsibleTrigger
-				className="group flex w-full items-center gap-1.5 rounded-[4px] py-1 text-left text-[13px] text-muted-foreground hover:text-foreground"
+				className="group flex w-full items-center gap-1.5 rounded-lg py-1 text-left text-[13px] text-muted-foreground hover:text-foreground"
 				style={{ paddingLeft: depth * 14 }}
 			>
-				<ChevronRight className="size-3.5 shrink-0 transition-transform group-data-[panel-open]:rotate-90" />
+				<ChevronRight className="size-3.5 shrink-0 transition-transform group-data-panel-open:rotate-90" />
 				<Folder className="size-3.5 shrink-0" />
 				<span className="truncate">{node.name}</span>
 			</CollapsibleTrigger>
@@ -76,7 +82,7 @@ function TreeRow({
 		<Link
 			href={`/projetos/${repoSlug}?file=${encodeURIComponent(node.path)}`}
 			className={cn(
-				'flex items-center gap-1.5 rounded-[4px] py-1 text-[13px]',
+				'flex items-center gap-1.5 rounded-lg py-1 text-[13px]',
 				isActive
 					? 'bg-muted text-foreground'
 					: 'text-muted-foreground hover:text-foreground'
