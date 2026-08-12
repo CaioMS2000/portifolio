@@ -44,5 +44,6 @@ next-env.d.ts
 .vscode
 claude design/
 *.md
+!notes/*.md
 *.sh
 *.txt
