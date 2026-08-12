@@ -1,7 +1,11 @@
-import { projects } from './data'
+import { getPortfolioProjects } from '@/lib/github'
 import { ProjectCard } from './project-card'
 
-export function ProjectsSection() {
+export async function ProjectsSection() {
+	const projects = await getPortfolioProjects()
+
+	if (projects.length === 0) return null
+
 	return (
 		<section className="border-t border-border py-14 pb-18">
 			<div className="mb-10 flex items-baseline gap-2.5">
