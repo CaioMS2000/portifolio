@@ -1,5 +1,8 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.4.2/schema.json",
+  "extends": [
+    "@caioms/biomejs-config/biome"
+  ],
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -8,11 +11,6 @@
   "files": {
     "ignoreUnknown": true,
     "includes": ["**", "!node_modules", "!.next", "!dist", "!build"]
-  },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "space",
-    "indentWidth": 2
   },
   "css": {
     "parser": {
