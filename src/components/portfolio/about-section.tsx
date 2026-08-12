@@ -1,4 +1,5 @@
 import { profile } from './data'
+import ProfileImage from './profile-image'
 
 export function AboutSection() {
 	return (
@@ -21,13 +22,7 @@ export function AboutSection() {
 				</p>
 			</div>
 			<div className="max-w-45 flex-[1_0_160px]">
-				{/* placeholder visual — sem foto real ainda */}
-				<div
-					aria-hidden
-					className="flex h-45 w-full items-center justify-center rounded-[6px] bg-muted font-mono text-[11px] text-muted-foreground"
-				>
-					foto de perfil
-				</div>
+				<ProfileImage />
 			</div>
 		</section>
 	)
