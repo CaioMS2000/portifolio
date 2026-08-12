@@ -105,7 +105,7 @@ export function FileTree({
 	repoSlug: string
 }) {
 	return (
-		<nav className="font-mono">
+		<nav className="min-h-0 flex-1 overflow-y-auto font-mono md:flex-none">
 			{tree.map(node => (
 				<TreeRow
 					key={node.path}

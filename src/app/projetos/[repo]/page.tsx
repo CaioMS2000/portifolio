@@ -23,8 +23,8 @@ export default async function ProjectRepoPage({
 		null
 
 	return (
-		<div className="mx-auto max-w-275 px-5">
-			<div className="flex items-center gap-2.5 border-b border-border py-6 font-mono text-xs text-muted-foreground">
+		<div className="flex h-[100dvh] flex-col px-5">
+			<div className="flex shrink-0 items-center gap-2.5 border-b border-border py-6 font-mono text-xs text-muted-foreground">
 				<a href="/" className="hover:text-foreground">
 					~/portfolio
 				</a>
@@ -32,13 +32,13 @@ export default async function ProjectRepoPage({
 				<span className="text-foreground">{detail.name}</span>
 			</div>
 
-			<div className="grid grid-cols-1 gap-6 py-8 md:grid-cols-[280px_1fr]">
+			<div className="flex min-h-0 flex-1 flex-col gap-6 py-8 md:flex-row">
 				<FileTree
 					tree={tree}
 					selectedPath={selectedFile?.path ?? null}
 					repoSlug={repo}
 				/>
-				<div className="min-h-100 rounded-[6px] border border-border bg-card">
+				<div className="min-h-0 flex-1 overflow-y-auto rounded-[6px] border border-border bg-card">
 					<Suspense
 						key={selectedFile?.path ?? 'none'}
 						fallback={

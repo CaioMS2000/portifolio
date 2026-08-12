@@ -92,7 +92,7 @@ export async function FileContent({
 
 	return (
 		<div
-			className="overflow-x-auto text-[13px] leading-relaxed [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_pre]:p-4"
+			className="overflow-x-auto text-[13px] leading-relaxed [&_pre]:!bg-transparent [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_pre]:p-4"
 			// biome-ignore lint/security/noDangerouslySetInnerHtml: saída do Shiki, código já escapado por ele
 			dangerouslySetInnerHTML={{ __html: html }}
 		/>
