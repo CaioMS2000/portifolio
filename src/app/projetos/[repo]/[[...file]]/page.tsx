@@ -1,15 +1,15 @@
+import { SiGithub } from '@icons-pack/react-simple-icons'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { flattenFiles, getRepoDetail, getRepoTree } from '@/lib/github'
-import { FileContent } from './file-content'
-import { FileTree } from './file-tree'
+import { FileContent } from '../file-content'
+import { FileTree } from '../file-tree'
 
 export default async function ProjectRepoPage({
 	params,
-	searchParams,
-}: PageProps<'/projetos/[repo]'>) {
-	const { repo } = await params
-	const { file } = await searchParams
+}: PageProps<'/projetos/[repo]/[[...file]]'>) {
+	const { repo, file } = await params
+	const requestedPath = file?.join('/')
 
 	const detail = await getRepoDetail(repo)
 	if (!detail) notFound()
@@ -18,18 +18,29 @@ export default async function ProjectRepoPage({
 	const files = flattenFiles(tree)
 
 	const selectedFile =
-		(typeof file === 'string' && files.find(f => f.path === file)) ||
+		(requestedPath && files.find(f => f.path === requestedPath)) ||
 		files.find(f => f.path.toLowerCase() === 'readme.md') ||
 		null
 
 	return (
-		<div className="flex h-[100dvh] flex-col px-5">
-			<div className="flex shrink-0 items-center gap-2.5 border-b border-border py-6 font-mono text-xs text-muted-foreground">
-				<a href="/" className="hover:text-foreground">
-					~/portfolio
+		<div className="flex h-dvh flex-col px-5">
+			<div className="flex shrink-0 items-center justify-between gap-2.5 border-b border-border py-6 font-mono text-xs text-muted-foreground">
+				<div className="flex items-center gap-2.5">
+					<a href="/" className="hover:text-foreground">
+						~/portfolio
+					</a>
+					<span>/</span>
+					<span className="text-foreground">{detail.name}</span>
+				</div>
+				<a
+					href={detail.repoHref}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="flex items-center gap-1.5 hover:text-foreground hover:underline"
+				>
+					<SiGithub className="size-3.5" color="currentColor" />
+					Ver no GitHub
 				</a>
-				<span>/</span>
-				<span className="text-foreground">{detail.name}</span>
 			</div>
 
 			<div className="flex min-h-0 flex-1 flex-col gap-6 py-8 md:flex-row">

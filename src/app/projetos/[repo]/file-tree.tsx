@@ -80,7 +80,7 @@ function TreeRow({
 
 	return (
 		<Link
-			href={`/projetos/${repoSlug}?file=${encodeURIComponent(node.path)}`}
+			href={`/projetos/${repoSlug}/${node.path.split('/').map(encodeURIComponent).join('/')}`}
 			className={cn(
 				'flex items-center gap-1.5 rounded-lg py-1 text-[13px]',
 				isActive

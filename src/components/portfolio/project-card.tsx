@@ -44,6 +44,8 @@ export function ProjectCard({ project }: { project: GithubProject }) {
 				/>
 				<a
 					href={project.repoHref}
+					target="_blank"
+					rel="noopener noreferrer"
 					className="font-mono text-[13px] text-muted-foreground hover:underline"
 				>
 					Repo
