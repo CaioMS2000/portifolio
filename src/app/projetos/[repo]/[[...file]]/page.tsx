@@ -1,10 +1,11 @@
 import { SiGithub } from '@icons-pack/react-simple-icons'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
+import { RefreshButton } from '@/components/refresh-button'
 import { flattenFiles, getRepoDetail, getRepoTree } from '@/lib/github'
+import { revalidateProject } from '../actions'
 import { FileContent } from '../file-content'
 import { FileTree } from '../file-tree'
-import { RefreshButton } from '../refresh-button'
 
 export default async function ProjectRepoPage({
 	params,
@@ -34,7 +35,7 @@ export default async function ProjectRepoPage({
 					<span className="text-foreground">{detail.name}</span>
 				</div>
 				<div className="flex items-center gap-4">
-					<RefreshButton repoSlug={repo} />
+					<RefreshButton action={() => revalidateProject(repo)} />
 					<a
 						href={detail.repoHref}
 						target="_blank"
