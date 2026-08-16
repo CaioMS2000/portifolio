@@ -13,6 +13,7 @@ export default async function ProfileImage() {
 					alt="Foto de perfil"
 					width={160}
 					height={180}
+					priority
 				/>
 			) : (
 				<div
