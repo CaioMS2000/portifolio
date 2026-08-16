@@ -153,7 +153,7 @@ function buildFileTree(items: GithubTreeItem[]): TreeNode[] {
 export async function getRepoTree(
 	repoSlug: string,
 	branch: string
-): Promise<{ tree: TreeNode[]; truncated: boolean }> {
+): Promise<{ tree: TreeNode[]; truncated: boolean; commitSha: string }> {
 	const res = await fetch(
 		`https://api.github.com/repos/${GITHUB_USERNAME}/${repoSlug}/git/trees/${branch}?recursive=1`,
 		{
@@ -169,7 +169,7 @@ export async function getRepoTree(
 		console.error(
 			`GitHub API respondeu ${res.status} ao buscar a árvore de ${repoSlug}`
 		)
-		return { tree: [], truncated: false }
+		return { tree: [], truncated: false, commitSha: branch }
 	}
 
 	const data: GithubTreeResponse = await res.json()
@@ -178,7 +178,11 @@ export async function getRepoTree(
 		console.warn(`Árvore de ${repoSlug} truncada pela API do GitHub`)
 	}
 
-	return { tree: buildFileTree(data.tree), truncated: data.truncated }
+	return {
+		tree: buildFileTree(data.tree),
+		truncated: data.truncated,
+		commitSha: data.sha,
+	}
 }
 
 export function flattenFiles(tree: TreeNode[]): TreeNode[] {
@@ -197,12 +201,12 @@ export function flattenFiles(tree: TreeNode[]): TreeNode[] {
 
 export async function getFileContent(
 	repoSlug: string,
-	branch: string,
+	ref: string,
 	path: string
 ): Promise<{ content: string } | null> {
 	const encodedPath = path.split('/').map(encodeURIComponent).join('/')
 	const res = await fetch(
-		`https://raw.githubusercontent.com/${GITHUB_USERNAME}/${repoSlug}/${branch}/${encodedPath}`,
+		`https://raw.githubusercontent.com/${GITHUB_USERNAME}/${repoSlug}/${ref}/${encodedPath}`,
 		{
 			next: {
 				revalidate: REVALIDATE_SECONDS,

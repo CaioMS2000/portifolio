@@ -29,11 +29,13 @@ function UnavailableState({
 export async function FileContent({
 	repoSlug,
 	branch,
+	commitSha,
 	path,
 	size,
 }: {
 	repoSlug: string
 	branch: string
+	commitSha: string
 	path: string
 	size: number | undefined
 }) {
@@ -57,7 +59,7 @@ export async function FileContent({
 		)
 	}
 
-	const file = await getFileContent(repoSlug, branch, path)
+	const file = await getFileContent(repoSlug, commitSha, path)
 
 	if (!file) {
 		return (

@@ -15,7 +15,7 @@ export default async function ProjectRepoPage({
 	const detail = await getRepoDetail(repo)
 	if (!detail) notFound()
 
-	const { tree } = await getRepoTree(repo, detail.defaultBranch)
+	const { tree, commitSha } = await getRepoTree(repo, detail.defaultBranch)
 	const files = flattenFiles(tree)
 
 	const selectedFile =
@@ -66,6 +66,7 @@ export default async function ProjectRepoPage({
 							<FileContent
 								repoSlug={repo}
 								branch={detail.defaultBranch}
+								commitSha={commitSha}
 								path={selectedFile.path}
 								size={selectedFile.size}
 							/>
