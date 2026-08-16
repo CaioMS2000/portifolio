@@ -1,5 +1,6 @@
 const GITHUB_USERNAME = 'CaioMS2000'
 const PORTFOLIO_TOPIC = 'portifolio'
+const STACK_TOPIC_PREFIX = 'stack-'
 const REVALIDATE_SECONDS = 3600
 
 type GithubRepoResponse = {
@@ -48,7 +49,7 @@ export type TreeNode = {
 	children?: TreeNode[]
 }
 
-function formatRepoName(slug: string): string {
+function formatSlug(slug: string): string {
 	return slug.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
 }
 
@@ -95,7 +96,7 @@ export async function getRepoDetail(
 	if (!repo || !repo.topics?.includes(PORTFOLIO_TOPIC)) return null
 
 	return {
-		name: formatRepoName(repo.name),
+		name: formatSlug(repo.name),
 		desc: repo.description || null,
 		repoHref: repo.html_url,
 		defaultBranch: repo.default_branch,
@@ -241,14 +242,29 @@ export async function getPortfolioProjects(): Promise<GithubProject[]> {
 		)
 
 		return await Promise.all(
-			featured.map(async repo => ({
-				name: formatRepoName(repo.name),
-				desc: repo.description || null,
-				tags: await getRepoLanguages(repo.name),
-				repoHref: repo.html_url,
-				demoHref: repo.homepage || null,
-				exploreHref: `/projetos/${repo.name}`,
-			}))
+			featured.map(async repo => {
+				const languages = await getRepoLanguages(repo.name)
+				const stackTopics = (repo.topics ?? [])
+					.filter(t => t.startsWith(STACK_TOPIC_PREFIX))
+					.map(t => formatSlug(t.slice(STACK_TOPIC_PREFIX.length)))
+
+				const seen = new Set<string>()
+				const tags = [...languages, ...stackTopics].filter(tag => {
+					const key = tag.toLowerCase()
+					if (seen.has(key)) return false
+					seen.add(key)
+					return true
+				})
+
+				return {
+					name: formatSlug(repo.name),
+					desc: repo.description || null,
+					tags,
+					repoHref: repo.html_url,
+					demoHref: repo.homepage || null,
+					exploreHref: `/projetos/${repo.name}`,
+				}
+			})
 		)
 	} catch (err) {
 		console.error('Falha ao buscar projetos do GitHub', err)
