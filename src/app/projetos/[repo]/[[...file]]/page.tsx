@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import { flattenFiles, getRepoDetail, getRepoTree } from '@/lib/github'
 import { FileContent } from '../file-content'
 import { FileTree } from '../file-tree'
+import { RefreshButton } from '../refresh-button'
 
 export default async function ProjectRepoPage({
 	params,
@@ -32,15 +33,18 @@ export default async function ProjectRepoPage({
 					<span>/</span>
 					<span className="text-foreground">{detail.name}</span>
 				</div>
-				<a
-					href={detail.repoHref}
-					target="_blank"
-					rel="noopener noreferrer"
-					className="flex items-center gap-1.5 hover:text-foreground hover:underline"
-				>
-					<SiGithub className="size-3.5" color="currentColor" />
-					Ver no GitHub
-				</a>
+				<div className="flex items-center gap-4">
+					<RefreshButton repoSlug={repo} />
+					<a
+						href={detail.repoHref}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="flex items-center gap-1.5 hover:text-foreground hover:underline"
+					>
+						<SiGithub className="size-3.5" color="currentColor" />
+						Ver no GitHub
+					</a>
+				</div>
 			</div>
 
 			<div className="flex min-h-0 flex-1 flex-col gap-6 py-8 md:flex-row">

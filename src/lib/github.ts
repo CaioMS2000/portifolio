@@ -1,5 +1,6 @@
 const GITHUB_USERNAME = 'CaioMS2000'
 const PORTFOLIO_TOPIC = 'portifolio'
+const REVALIDATE_SECONDS = 3600
 
 type GithubRepoResponse = {
 	name: string
@@ -56,7 +57,7 @@ async function getRepoLanguages(repoName: string): Promise<string[]> {
 		`https://api.github.com/repos/${GITHUB_USERNAME}/${repoName}/languages`,
 		{
 			headers: { Accept: 'application/vnd.github+json' },
-			next: { revalidate: 3600, tags: ['github-repos'] },
+			next: { revalidate: REVALIDATE_SECONDS, tags: ['github-repos'] },
 		}
 	)
 
@@ -75,7 +76,7 @@ async function fetchRepo(repoSlug: string): Promise<GithubRepoResponse | null> {
 		{
 			headers: { Accept: 'application/vnd.github+json' },
 			next: {
-				revalidate: 3600,
+				revalidate: REVALIDATE_SECONDS,
 				tags: ['github-repos', `github-repo-${repoSlug}`],
 			},
 		}
@@ -158,7 +159,7 @@ export async function getRepoTree(
 		{
 			headers: { Accept: 'application/vnd.github+json' },
 			next: {
-				revalidate: 3600,
+				revalidate: REVALIDATE_SECONDS,
 				tags: ['github-repos', `github-repo-${repoSlug}`],
 			},
 		}
@@ -204,7 +205,7 @@ export async function getFileContent(
 		`https://raw.githubusercontent.com/${GITHUB_USERNAME}/${repoSlug}/${branch}/${encodedPath}`,
 		{
 			next: {
-				revalidate: 3600,
+				revalidate: REVALIDATE_SECONDS,
 				tags: ['github-repos', `github-repo-${repoSlug}`],
 			},
 		}
@@ -221,7 +222,7 @@ export async function getPortfolioProjects(): Promise<GithubProject[]> {
 			`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&type=owner`,
 			{
 				headers: { Accept: 'application/vnd.github+json' },
-				next: { revalidate: 3600, tags: ['github-repos'] },
+				next: { revalidate: REVALIDATE_SECONDS, tags: ['github-repos'] },
 			}
 		)
 
