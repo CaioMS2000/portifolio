@@ -46,5 +46,6 @@ screenshots/
 claude design/
 *.md
 !notes/*.md
+!docs/**/*.md
 *.sh
 *.txt
