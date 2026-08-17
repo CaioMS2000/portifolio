@@ -11,7 +11,8 @@ via API — sem duplicar conteúdo entre o repositório do projeto e este site.
   repositórios do GitHub com a topic `portifolio`. Adicionar ou remover um projeto da
   vitrine é só editar as topics do repo no GitHub — sem tocar em código nem fazer deploy
   aqui.
-- Cada projeto tem uma rota própria (`/projetos/[repo]/[...file]`) que busca a árvore de
+- Cada projeto tem uma rota própria (`/projetos/[repo]/[[...file]]` — catch-all opcional,
+  então `/projetos/[repo]` sozinho já funciona e cai no README) que busca a árvore de
   arquivos do repositório (GitHub Trees API) e renderiza o conteúdo do arquivo
   selecionado — com highlight de sintaxe (Shiki) para código, e Markdown (GFM +
   diagramas Mermaid, carregados sob demanda) para `.md`.
@@ -28,6 +29,7 @@ worker ou serviços adicionais.
 
 - [ADR 001 — Fonte e estratégia de atualização dos dados dos projetos](docs/decisions/001-fonte-e-atualizacao-de-dados-dos-projetos.md)
 - [Deep-dive — Por que o bundle do Mermaid vazava para toda página de projeto](docs/deep-dives/mermaid-lazy-loading.md)
+- [Deep-dive — Por que um arquivo específico ficava desatualizado mesmo depois de revalidar](docs/deep-dives/raw-content-cdn-staleness.md)
 
 ## Stack
 
@@ -51,14 +53,10 @@ comportamento de code-splitting descrito no deep-dive acima, que não aparece em
 
 ## Limitações conhecidas / próximos passos
 
-- As tags de stack exibidas no card de cada projeto (ex.: "TypeScript", "Go") vêm hoje de
-  detecção automática de linguagem pela API do GitHub, não das `topics` do repositório.
-  Isso significa que infra/ferramentas que não são "linguagem de código" (PostgreSQL,
-  Kafka, Docker etc.) não aparecem nas tags, mesmo quando marcadas como topic. Migrar
-  essa parte para `topics` — como já é feito para decidir quais repos aparecem — é a
-  próxima melhoria planejada (contexto em
-  [docs/decisions/001-fonte-e-atualizacao-de-dados-dos-projetos.md](docs/decisions/001-fonte-e-atualizacao-de-dados-dos-projetos.md)).
 - Sem testes automatizados ainda.
-- A revalidação dos dados do GitHub é só por tempo (`revalidate: 3600`); um webhook do
-  GitHub disparando `revalidateTag` deixaria a atualização quase instantânea em vez de
-  esperar até 1h.
+- A revalidação automática dos dados do GitHub é só por tempo (`revalidate: 3600`); um
+  webhook do GitHub disparando `updateTag` deixaria a atualização automática quase
+  instantânea em vez de esperar até 1h. Hoje existe um caminho manual pro mesmo problema
+  (botões de "Atualizar" na home e na página de cada projeto — contexto em
+  [docs/decisions/001-fonte-e-atualizacao-de-dados-dos-projetos.md](docs/decisions/001-fonte-e-atualizacao-de-dados-dos-projetos.md)),
+  mas nada automático ainda.

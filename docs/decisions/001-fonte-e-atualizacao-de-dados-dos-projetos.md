@@ -75,15 +75,20 @@ visitante.
   uma por visitante), o que mantém a aplicação dentro do limite de 60 req/h mesmo sem
   autenticação.
 - Existe até 1h de defasagem entre uma atualização no GitHub (nova descrição, novo
-  arquivo) e o site refletir isso. Não implementamos revalidação por webhook ainda — é
-  uma melhoria possível que a estrutura de `tags` já deixa pronta.
-- **Dívida conhecida, fora do escopo desta decisão**: as *tags de stack* exibidas em cada
-  card (ex. "TypeScript", "Go") vêm de `getRepoLanguages`, que usa a API de detecção
-  automática de linguagem (`/languages`, baseada em bytes de código via linguist) — **não**
-  das `topics`. Isso é uma inconsistência em relação à intenção original (documentada em
-  [notes/github-api-project-fields.md](../../notes/github-api-project-fields.md)), que
-  era usar `topics` tanto para seleção quanto para as tags de stack. Na prática, isso
-  significa que infraestrutura/ferramentas que o linguist não reconhece como "linguagem"
-  (PostgreSQL, Kafka, Docker etc.) não aparecem como tag mesmo quando marcadas como topic
-  no repositório. Corrigir isso — trocar `getRepoLanguages` por `repo.topics` também na
-  montagem das tags — é a próxima melhoria planejada (ver README).
+  arquivo) e o site refletir isso por conta própria. Não implementamos revalidação por
+  webhook — mas adicionamos um caminho manual pro mesmo problema: botões de "Atualizar"
+  (Server Action + [`updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag),
+  não `revalidateTag`, porque o objetivo é o dono do site ver o resultado na mesma
+  resposta, não só marcar como stale para uma visita futura) tanto na listagem de
+  projetos (`tag: 'github-repos'`) quanto na página de cada projeto
+  (`tag: 'github-repo-{slug}'`). Continua sem ser automático — quem decide que vale a
+  pena atualizar antes da 1h é o dono do site, clicando.
+- **Dívida conhecida — resolvida em 2026-08-17**: as *tags de stack* exibidas em cada
+  card (ex. "TypeScript", "Go") vinham só de `getRepoLanguages` (`/languages`, detecção
+  automática por bytes de código via linguist), nunca de `topics`. Isso significava que
+  infraestrutura/ferramentas que o linguist não reconhece como "linguagem" (PostgreSQL,
+  Kafka, Docker etc.) não apareciam como tag mesmo quando marcadas como topic no
+  repositório. Resolvido combinando as duas fontes: linguagens auto-detectadas continuam
+  vindo do endpoint de sempre, e topics com prefixo `stack-` (ex. `stack-postgresql`)
+  entram como tags adicionais, deduplicadas por nome — ver
+  [src/lib/github.ts](../../src/lib/github.ts), `getPortfolioProjects`.
