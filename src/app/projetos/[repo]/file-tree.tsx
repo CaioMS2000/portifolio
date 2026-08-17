@@ -37,7 +37,7 @@ function FolderRow({
 			>
 				<ChevronRight className="size-3.5 shrink-0 transition-transform group-data-panel-open:rotate-90" />
 				<Folder className="size-3.5 shrink-0" />
-				<span className="truncate">{node.name}</span>
+				<span className="min-w-0 flex-1 truncate">{node.name}</span>
 			</CollapsibleTrigger>
 			<CollapsibleContent>
 				{node.children?.map(child => (
@@ -90,7 +90,7 @@ function TreeRow({
 			style={{ paddingLeft: depth * 14 + 20 }}
 		>
 			<File className="size-3.5 shrink-0" />
-			<span className="truncate">{node.name}</span>
+			<span className="min-w-0 flex-1 truncate">{node.name}</span>
 		</Link>
 	)
 }
@@ -105,7 +105,7 @@ export function FileTree({
 	repoSlug: string
 }) {
 	return (
-		<nav className="min-h-0 flex-1 overflow-y-auto font-mono md:flex-none">
+		<nav className="min-h-0 min-w-0 flex-1 overflow-y-auto font-mono md:max-w-70 md:flex-none">
 			{tree.map(node => (
 				<TreeRow
 					key={node.path}
