@@ -35,7 +35,7 @@ export default async function ProjectRepoPage({
 					<span className="text-foreground">{detail.name}</span>
 				</div>
 				<div className="flex items-center gap-4">
-					<RefreshButton action={() => revalidateProject(repo)} />
+					<RefreshButton action={revalidateProject.bind(null, repo)} />
 					<a
 						href={detail.repoHref}
 						target="_blank"

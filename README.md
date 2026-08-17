@@ -30,6 +30,7 @@ worker ou serviços adicionais.
 - [ADR 001 — Fonte e estratégia de atualização dos dados dos projetos](docs/decisions/001-fonte-e-atualizacao-de-dados-dos-projetos.md)
 - [Deep-dive — Por que o bundle do Mermaid vazava para toda página de projeto](docs/deep-dives/mermaid-lazy-loading.md)
 - [Deep-dive — Por que um arquivo específico ficava desatualizado mesmo depois de revalidar](docs/deep-dives/raw-content-cdn-staleness.md)
+- [Deep-dive — Por que um clique simples pra ver um projeto derrubava a página em produção](docs/deep-dives/server-action-closure-boundary.md)
 
 ## Stack
 
