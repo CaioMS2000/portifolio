@@ -26,6 +26,7 @@ type GithubTreeResponse = {
 }
 
 export type GithubProject = {
+	slug: string
 	name: string
 	desc: string | null
 	tags: string[]
@@ -86,6 +87,46 @@ async function fetchRepo(repoSlug: string): Promise<GithubRepoResponse | null> {
 	if (!res.ok) return null
 
 	return res.json()
+}
+
+async function buildProject(repo: GithubRepoResponse): Promise<GithubProject> {
+	const languages = await getRepoLanguages(repo.name)
+	const stackTopics = (repo.topics ?? [])
+		.filter(t => t.startsWith(STACK_TOPIC_PREFIX))
+		.map(t => formatSlug(t.slice(STACK_TOPIC_PREFIX.length)))
+
+	const seen = new Set<string>()
+	const tags = [...languages, ...stackTopics].filter(tag => {
+		const key = tag.toLowerCase()
+		if (seen.has(key)) return false
+		seen.add(key)
+		return true
+	})
+
+	return {
+		slug: repo.name,
+		name: formatSlug(repo.name),
+		desc: repo.description || null,
+		tags,
+		repoHref: repo.html_url,
+		demoHref: repo.homepage || null,
+		exploreHref: `/projetos/${repo.name}`,
+	}
+}
+
+/**
+ * Busca um único projeto por slug, com as mesmas tags que aparecem na listagem.
+ * Retorna null se o repo não existir ou não tiver a topic "portifolio" — o
+ * chamador decide se isso é erro fatal (ex. o agregador do CV trata como tal).
+ */
+export async function getPortfolioProjectBySlug(
+	repoSlug: string
+): Promise<GithubProject | null> {
+	const repo = await fetchRepo(repoSlug)
+
+	if (!repo || !repo.topics?.includes(PORTFOLIO_TOPIC)) return null
+
+	return buildProject(repo)
 }
 
 export async function getRepoDetail(
@@ -241,31 +282,7 @@ export async function getPortfolioProjects(): Promise<GithubProject[]> {
 			repo.topics?.includes(PORTFOLIO_TOPIC)
 		)
 
-		return await Promise.all(
-			featured.map(async repo => {
-				const languages = await getRepoLanguages(repo.name)
-				const stackTopics = (repo.topics ?? [])
-					.filter(t => t.startsWith(STACK_TOPIC_PREFIX))
-					.map(t => formatSlug(t.slice(STACK_TOPIC_PREFIX.length)))
-
-				const seen = new Set<string>()
-				const tags = [...languages, ...stackTopics].filter(tag => {
-					const key = tag.toLowerCase()
-					if (seen.has(key)) return false
-					seen.add(key)
-					return true
-				})
-
-				return {
-					name: formatSlug(repo.name),
-					desc: repo.description || null,
-					tags,
-					repoHref: repo.html_url,
-					demoHref: repo.homepage || null,
-					exploreHref: `/projetos/${repo.name}`,
-				}
-			})
-		)
+		return await Promise.all(featured.map(buildProject))
 	} catch (err) {
 		console.error('Falha ao buscar projetos do GitHub', err)
 		return []
