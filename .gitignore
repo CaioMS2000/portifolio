@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# gerado no build (scripts/generate-cv.tsx)
+/public/cv.pdf
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -47,5 +50,7 @@ claude design/
 *.md
 !notes/*.md
 !docs/**/*.md
+!como-preencher-cv.md
+*/curriculo-old.pdf
 *.sh
 *.txt

@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "dev:clean": "rm -rf .next && next dev",
-    "build": "next build",
+    "build": "next build && bun run scripts/generate-cv.tsx",
+    "generate-cv": "bun run scripts/generate-cv.tsx",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.2",
+    "@react-pdf/renderer": "^4.6.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
