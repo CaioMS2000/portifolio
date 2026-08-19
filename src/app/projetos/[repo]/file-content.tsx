@@ -71,7 +71,9 @@ export async function FileContent({
 	}
 
 	if (isMarkdownPath(path)) {
-		return <MarkdownContent content={file.content} />
+		return (
+			<MarkdownContent content={file.content} repoSlug={repoSlug} path={path} />
+		)
 	}
 
 	const { html, skipped } = await highlightCode(

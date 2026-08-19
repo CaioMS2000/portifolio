@@ -1,8 +1,38 @@
+import path from 'node:path'
 import type { ReactElement, ReactNode } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { highlightCode } from '@/lib/highlight'
 import { MermaidDiagram } from './mermaid-diagram-lazy'
+
+const ABSOLUTE_HREF_PATTERN = /^([a-z][a-z0-9+.-]*:|#|\/)/i
+
+/**
+ * Links relativos em markdown são escritos contra a posição do arquivo dentro
+ * do repo (é assim que funcionam no GitHub, no editor, em qualquer lugar).
+ * A rota do site espelha esse path (`/projetos/{repo}/{path}`), então
+ * resolvemos o relativo contra o path real do arquivo — não contra a URL da
+ * página — pra não depender da resolução implícita do browser.
+ */
+function resolveMarkdownHref(
+	href: string,
+	repoSlug: string,
+	currentPath: string
+): string {
+	if (ABSOLUTE_HREF_PATTERN.test(href)) return href
+
+	const hashIndex = href.indexOf('#')
+	const target = hashIndex === -1 ? href : href.slice(0, hashIndex)
+	const fragment = hashIndex === -1 ? '' : href.slice(hashIndex)
+
+	const resolved = path.posix
+		.normalize(path.posix.join(path.posix.dirname(currentPath), target))
+		.replace(/^(\.\.\/)+/, '') // não deixa o link escapar da raiz do repo
+
+	const encodedPath = resolved.split('/').map(encodeURIComponent).join('/')
+
+	return `/projetos/${repoSlug}/${encodedPath}${fragment}`
+}
 
 async function CodeBlock({ children }: { children?: ReactNode }) {
 	const codeElement = children as ReactElement<{
@@ -28,7 +58,15 @@ async function CodeBlock({ children }: { children?: ReactNode }) {
 	)
 }
 
-export function MarkdownContent({ content }: { content: string }) {
+export function MarkdownContent({
+	content,
+	repoSlug,
+	path: currentPath,
+}: {
+	content: string
+	repoSlug: string
+	path: string
+}) {
 	return (
 		<div className="p-6 text-[15px] leading-relaxed text-foreground">
 			<ReactMarkdown
@@ -62,7 +100,14 @@ export function MarkdownContent({ content }: { content: string }) {
 						<p className="mb-4 text-muted-foreground">{children}</p>
 					),
 					a: ({ children, href }) => (
-						<a href={href} className="text-primary hover:underline">
+						<a
+							href={
+								href
+									? resolveMarkdownHref(href, repoSlug, currentPath)
+									: undefined
+							}
+							className="text-primary hover:underline"
+						>
 							{children}
 						</a>
 					),
