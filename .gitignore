@@ -51,6 +51,7 @@ claude design/
 !notes/*.md
 !docs/**/*.md
 !como-preencher-cv.md
+!como-marcar-stack-topics.md
 */curriculo-old.pdf
 *.sh
 *.txt
